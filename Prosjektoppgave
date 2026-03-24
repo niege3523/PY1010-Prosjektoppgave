@@ -33,7 +33,13 @@ print(score)
 #Del b)
 
 #Teller hvor mange ganger hver ukedag forekommer i datasettet
-antall_dager = data["Ukedag"].value_counts()
+antall_dager = {}
+
+for dag in u_dag:
+    if dag in antall_dager:
+        antall_dager[dag] += 1
+    else:
+        antall_dager[dag] = 1
 
 #Visualiserer resultatene i et stolpediagram
 import matplotlib.pyplot as plt
