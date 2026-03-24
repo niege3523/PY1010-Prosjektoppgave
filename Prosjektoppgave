@@ -6,7 +6,7 @@ Oppdatert 2026 03 24
 """
 
 
-#Del a)
+#Del A)
 
 import pandas as pd
 
@@ -18,10 +18,13 @@ data = pd.read_excel(filnavn)
 import numpy as np
 
 # Lagrer data fra hver kolonne i hver sin array
-u_dag = data["Ukedag"]
-kl_slett = data["Klokkeslett"]
-varighet = data["Varighet"]
-score = data["Tilfredshet"]
+u_dag = data["Ukedag"].values
+
+kl_slett = data["Klokkeslett"].values
+
+varighet = data["Varighet"].values
+
+score = data["Tilfredshet"].values
 
 print(u_dag)
 print(kl_slett)
