@@ -55,7 +55,7 @@ plt.bar(dager, antall, width=0.5, color=("green", "blue", "orange", "red", "brow
 plt.title("Oversikt over antall hendelser for hver ukedag")
 plt.xlabel("Dag")
 plt.ylabel("Antall")
-
+plt.savefig("Stolpediagram.pdf")
 plt.show()
 
 
