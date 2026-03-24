@@ -45,18 +45,17 @@ for dag in u_dag:
 import matplotlib.pyplot as plt
 
 dager = list(antall_dager.keys())
-antall = list(antall_dager.values)
+antall = list(antall_dager.values())
 
 #Legger på tall over stolpene
 for i, verdi in enumerate(antall):
     plt.text(i, verdi + 0.1, str(verdi), ha="center")
 
-#Plotter et stolpediagram som viser antall henvendelser per ukedag
 plt.bar(dager, antall, width=0.5, color=("green", "blue", "orange", "red", "brown"))
 plt.title("Oversikt over antall hendelser for hver ukedag")
 plt.xlabel("Dag")
 plt.ylabel("Antall")
-plt.savefig("Stolpediagram.pdf")
+
 plt.show()
 
 
