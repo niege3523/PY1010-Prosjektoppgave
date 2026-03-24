@@ -1,1 +1,153 @@
+"""
+Prosjektoppgave Dataanalyser av datalogg fra supportavdelingen til MORSE.
+Nina N. Egeberg (niege3523@usn.no)
+Oppdatert 2026 03 24
 
+"""
+
+
+#Del a)
+
+import pandas as pd
+
+#Henter data fra excelfilen 
+filnavn = "support_uke_24.xlsx"
+
+data = pd.read_excel(filnavn)
+
+import numpy as np
+
+# Lagrer data fra hver kolonne i hver sin array
+u_dag = data["Ukedag"]
+kl_slett = data["Klokkeslett"]
+varighet = data["Varighet"]
+score = data["Tilfredshet"]
+
+print(u_dag)
+print(kl_slett)
+print(varighet)
+print(score)
+
+
+
+#Del b)
+
+#Teller hvor mange ganger hver ukedag forekommer i datasettet
+antall_dager = data["Ukedag"].value_counts()
+
+#Visualiserer resultatene i et stolpediagram
+import matplotlib.pyplot as plt
+
+dager = list(antall_dager.keys())
+antall = list(antall_dager.values)
+
+#Legger på tall over stolpene
+for i, verdi in enumerate(antall):
+    plt.text(i, verdi + 0.1, str(verdi), ha="center")
+
+#Plotter et stolpediagram som viser antall henvendelser per ukedag
+plt.bar(dager, antall, width=0.5, color=("green", "blue", "orange", "red", "brown"))
+plt.title("Oversikt over antall hendelser for hver ukedag")
+plt.xlabel("Dag")
+plt.ylabel("Antall")
+plt.savefig("Stolpediagram.pdf")
+plt.show()
+
+
+
+#Del c)
+
+#Finner korteste og lengste samtaletid
+samtaletid = np.array(varighet)
+
+print(f"Korteste samtaletid loggført i uke 24 er {samtaletid.min()}")
+print(f"Lengste samtaletid loggført i uke 24 er {samtaletid.max()}")
+
+
+
+#Del d)
+
+#Konverterer samtaletid fra HH:MM:SS til sekunder
+sekunder = []
+
+for tid in samtaletid:
+    timer, minutter, sek = map(int, tid.split(":"))
+    sekunder.append(timer * 3600 + minutter * 60 + sek)
+
+#Beregner gjennomsnittlig samtaletid i sekunder
+gjennomsnitt_sekunder = int(np.mean(sekunder))
+
+#Gjør om sekunder tilbake til HH:MM:SS
+def konverter_sekunder(gjennomsnitt_sekunder):
+    timer = gjennomsnitt_sekunder // 3600
+    minutter = (gjennomsnitt_sekunder % 3600) // 60
+    sekunder = gjennomsnitt_sekunder % 60
+    return timer, minutter, sekunder
+    
+t, m, s = konverter_sekunder(gjennomsnitt_sekunder)
+
+print(f"Gjennomsnittlig samtaletid i uke 24 er {int(t):02}:{int(m):02}:{int(s):02}")
+
+
+
+#Del e)
+
+# Gjør om klokkeslett-kolonnen til data-time-objekter
+tider = pd.to_datetime(data["Klokkeslett"], format="%H:%M:%S")
+
+#Henter ut timen fra hvert klokkeslett
+timer = tider.dt.hour
+
+#Definerer intervallene som hendelsene skal telles i
+intervaller = {
+    "08-10": (8, 10),
+    "10-12": (10, 12),
+    "12-14": (12, 14),
+    "14-16": (14, 16)
+}
+
+#Lager en dictionary som lagrer antall henvendelser per tidsintervall
+resultat = {}
+
+#Teller hvor mange henvendelser som er i hvert intervall
+for navn, (start, slutt) in intervaller.items():
+    mask = (timer >= start) & (timer < slutt)
+    resultat[navn] = mask.sum()
+    
+resultat = {k: int(v) for k, v in resultat.items()}
+
+#Lager etiketter og plotter kakediagrammet
+my_labels = [f"{key}: {value}" for key, value in resultat.items()]
+
+values = list(resultat.values())
+
+plt.rc("font", size = 12)
+plt.pie(values, labels = my_labels, autopct="%.1f%%")
+plt.title("Antall henvendelser i de forskjellige tidsrommene")
+plt.savefig("kakediagram.pdf")
+plt.show()
+
+
+
+# Del F)
+
+#Henter tilfredshetdata og fjerner tomme/blanke ruter
+score = data ["Tilfredshet"].dropna() 
+
+#Teller antall svar i hver kategori basert på NPS-modellen
+promoters = (score >= 9).sum()                   # 9-10
+passives = ((score >= 7) & (score <=8)).sum()   # 7-8
+detractors  = (score <= 6).sum()                  # 1-6
+
+#Totalt antall gyldige tilbakemeldinger
+total = len(score)
+
+#Regner ut NPS i prosent
+nps = ((promoters - detractors) /total) * 100
+
+#Skriver ut resultatene
+print("Promoters (9-10):", promoters)
+print("Passives (7-8):", passives)
+print("Detractors (1-6):", detractors)
+print("Antall tilbakemeldinger:", total)
+print(f"NPS: {nps:.1f}")
