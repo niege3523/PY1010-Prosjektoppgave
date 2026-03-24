@@ -6,7 +6,7 @@ Oppdatert 2026 03 24
 """
 
 
-#Del A)
+#Del a)
 
 import pandas as pd
 
@@ -134,7 +134,7 @@ plt.show()
 
 
 
-# Del F)
+# Del f)
 
 #Henter tilfredshetdata og fjerner tomme/blanke ruter
 score = data ["Tilfredshet"].dropna() 
